@@ -1,0 +1,4 @@
+﻿
+
+{'nimi': 'Anna', 'perenimi': 'Ivanova', 'email': 'anna.ivanova@gmail.com'}
+{'nimi': 'Mariia', 'perenimi': 'Posvystak', 'email': 'posvystakmariia@gmail.com'}

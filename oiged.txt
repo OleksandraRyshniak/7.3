@@ -1,0 +1,1 @@
+﻿{'nimi': 'Oleksandra', 'perenimi': 'Ryshniak', 'email': 'oleksandraryshniak@gmail.com'}
