@@ -1,4 +1,4 @@
-from curses.ascii import isalpha
+
 from funktsioonid import *
 from random import *
 
@@ -9,30 +9,32 @@ print("1. Пройти опрос;\n",
       "3. Välja.")
 while True:
     try:
-        valik=int(input("Ваш выбор: ")).strip()
+        valik=int(input("Ваш выбор: "))
         break
     except:
         print("Ответ должен быть числовым!")
 while True:
     if valik==1:
-        for i in range (6):
+        for i in range (0,5):
             while 1:
                 try:
                     nimi=str(input("Sisesta oma nimi: ")).strip().capitalize()
-                    if nimi==isalpha():
+                    if nimi.isalpha() :
                         break
                 except:
                     print("On vaja täht!")
             while 1:
                 try:
                     perenimi=str(input("Sisesta oma perekonnanimi: ")).strip().capitalize()
-                    if perenimi==isalpha():break
+                    if perenimi.isalpha():break
                 except:
                     print("On vaja täht!")
-            asjaosaline("koik.txt",nimi, perenimi)
-
+            email=str(input("Sisesta oma email: ")).strip()
+            asjaosaline("koik.txt",nimi, perenimi, email)
+        kogus_asjaosaline("koik.txt")
+        break
     elif valik==2:
-        print()
+        
         break
     elif valik==3:
         break
