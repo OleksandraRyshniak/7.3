@@ -1,5 +1,8 @@
 import random 
-
+import smtplib
+from email.message import EmailMessage
+import ssl
+from tkinter import filedialog
 
 def asjaosaline(fail:str, nimi:str, perenimi:str, email:str):
     """
@@ -28,25 +31,20 @@ def kogus_asjaosaline(fail:str):
         print("Недостаточное колтчество участников!")
         return
     else:
-        if nimi("koik.txt"):
-
-        for kirje in valitud:
-            print(f"Тест проходит {kirje['nimi']} {kirje['perenimi']}")
-            if valik_kusimus("kusimused_vastused.txt"):
-                fail1="oiged.txt"
-                with open(fail1, 'a', encoding="utf-8-sig") as f:
-                    f.write(str(kirje)+"\n")
-            else:
-                fail2="valed.txt"
-                with open(fail2, 'a', encoding="utf-8-sig") as f:
-                    f.write(str(kirje)+"\n")
+        nimi("koik.txt") # type: ignore
 
 
-def valik_kusimus(fail:str)-> bool:
+def valik_kusimus(fail:str, nimi: str, perenimi: str, email: str)-> bool:
     """
     """
     N=5
-    koik=1
+    koik=0
+    fail1="koik.txt"
+    with open(fail, 'r', encoding="utf-8-sig") as f:
+        p=[]
+        for rida in f:
+            p.append(eval(rida.strip()))
+    k=False
     with open(fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
@@ -64,21 +62,21 @@ def valik_kusimus(fail:str)-> bool:
                 koik+=1
                 print("Õige")
             else:
-                koik-=1
                 print(f"Õige vastus on: {kirje['vastus']}")
         if koik/N>=0.5:
+            saada_kiri_oige(email, nimi, perenimi, str(koik))
             print("Поздравляем! Вы сдали тест.")
             k=True
         else:
+            saada_kiri_valed(email, nimi, perenimi, str(koik))
             print("Вы не сдали тест!")
-            k=False
     return k
 
 def nimi(fail:str)->bool:
     """
     """
     M=3
-    fail1="oige.txt"
+    fail1="oiged.txt"
     fail2="valed.txt"
     with open (fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
@@ -90,17 +88,32 @@ def nimi(fail:str)->bool:
             oige.append(eval(rida.strip()))
     with open (fail1, 'r', encoding="utf-8-sig") as f:
         valed=[]
-    for rida in f:
-        valed.append(eval(rida.strip()))
-    for i in range (0,M):
+        for rida in f:
+            valed.append(eval(rida.strip()))
+    p=oige+valed
+    for i in range (M):
         random.shuffle(sonad)
-        valitud=sonad[:M]
-        if valitud in oige or valed:
-            m=False
+        valitud=sonad[:1]
+        if valitud in p:
+            print("Этот учасник уже проходил опрос!")
+            return 
+            m = False
         else:
+            for kirje in valitud:
+                print(f"Тест проходит {kirje['nimi']} {kirje['perenimi']}")
+                nimi=kirje['nimi']
+                perenimi=kirje['perenimi']
+                email=kirje['email']
+            if valik_kusimus("kusimused_vastused.txt", nimi, perenimi, email): 
+                fail1="oiged.txt"
+                with open(fail1, 'a', encoding="utf-8-sig") as f:
+                    f.write(str(kirje)+"\n")
+            else:
+                fail2="valed.txt"
+                with open(fail2, 'a', encoding="utf-8-sig") as f:
+                    f.write(str(kirje)+"\n")
             m=True
     return m
-
 
 
 def lisamine_kusimus(fail:str):
@@ -130,6 +143,92 @@ def lisamine_kusimus(fail:str):
             print("Küsimus on lisatud")
 
 
+def saada_kiri_oige(email:str, nimi:str, perenimi:str, koik:str):
+    kellele=email
+    teema="Tere" + " " + nimi + " " + perenimi
+    sisu="Sinu õigete vastuste arv: " + koik +"."
+    sisu1="Sa sooritasid testi edukalt."
+    smtp_server='smtp.gmail.com'
+    smtp_port=587
+    kellelt="oleksandraryshniak@gmail.com"
+    salasõna=input("Salasõna: ")
+    msg=EmailMessage()
+    msg['Subject']=teema
+    msg['From']=kellelt
+    msg['To']=kellele
+    msg.set_content(f"{sisu}\n{sisu1}")
+    try:
+        with smtplib.SMTP(smtp_server,smtp_port) as server:
+            server.starttls(context=ssl.create_default_context())
+            server.login(kellelt,salasõna)
+            server.send_message(msg)
+        print("Kiri saadetud!")
+    except Exception as e:
+        print("Viga: ",e)
 
 
-# 
+def saada_kiri_valed(email:str, nimi:str, perenimi:str, koik:str):
+    kellele=email
+    teema="Tere" + " " + nimi + " " + perenimi
+    sisu="Sinu õigete vastuste arv: " + koik +"."
+    sisu1="Kahjuks testi ei sooritatud edukalt."
+    smtp_server='smtp.gmail.com'
+    smtp_port=587
+    kellelt="oleksandraryshniak@gmail.com"
+    salasõna=input("Salasõna: ")
+    msg=EmailMessage()
+    msg['Subject']=teema
+    msg['From']=kellelt
+    msg['To']=kellele
+    msg.set_content(f"{sisu}\n{sisu1}")
+    try:
+        with smtplib.SMTP(smtp_server,smtp_port) as server:
+            server.starttls(context=ssl.create_default_context())
+            server.login(kellelt,salasõna)
+            server.send_message(msg)
+        print("Kiri saadetud!")
+    except Exception as e:
+        print("Viga: ",e)
+
+def saada_koondraport(tulemused, parim_vastaja, email_tooandjale="tootaja@firma.ee"):
+    """
+    Saadab tööandjale koondrapordi küsitlustulemuste kohta.
+    """
+    raport = "Tere!\n\nTänased küsimustiku tulemused:\n\n"
+    
+    for tulemus in tulemused:
+        nimi = tulemus['nimi']
+        oiged = tulemus['oiged']
+        email = tulemus['email']
+        sobivus = "SOBIS" if oiged >= 3 else "EI SOBINUD"  
+        raport += f"{nimi} – {oiged} õigesti – {email} – {sobivus}\n"
+    
+    raport += f"\nParim vastaja: {parim_vastaja['nimi']} ({parim_vastaja['oiged']} õigesti)\n"
+    
+    raport += "\nLugupidamisega,\nKüsimustiku Automaatprogramm"
+
+    send_email_to_workplace(email_tooandjale, "Tänased küsitlustulemused", raport)
+
+def send_email_to_workplace(kellele, teema, sisu):
+    """
+    Funktsioon e-maili saatmiseks tööandjale.
+    """
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587
+    kellelt = "oleksandraryshniak@gmail.com"  
+    salasõna = input("Sisesta oma e-maili salasõna: ")
+
+    msg = EmailMessage()
+    msg['Subject'] = teema
+    msg['From'] = kellelt
+    msg['To'] = kellele
+    msg.set_content(sisu)
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls(context=ssl.create_default_context())
+            server.login(kellelt, salasõna)
+            server.send_message(msg)
+        print("Koondraport saadetud tööandjale!")
+    except Exception as e:
+        print("Viga e-maili saatmisel: ", e)
