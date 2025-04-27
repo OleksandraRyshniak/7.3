@@ -31,10 +31,9 @@ def kogus_asjaosaline(fail:str):
         print("Недостаточное колтчество участников!")
         return
     else:
-        nimi("koik.txt") # type: ignore
+        nimi("koik.txt") 
 
-
-def valik_kusimus(fail:str, nimi: str, perenimi: str, email: str)-> bool:
+def valik_kusimus(fail:str)-> any:
     """
     """
     N=5
@@ -64,13 +63,11 @@ def valik_kusimus(fail:str, nimi: str, perenimi: str, email: str)-> bool:
             else:
                 print(f"Õige vastus on: {kirje['vastus']}")
         if koik/N>=0.5:
-            saada_kiri_oige(email, nimi, perenimi, str(koik))
             print("Поздравляем! Вы сдали тест.")
             k=True
         else:
-            saada_kiri_valed(email, nimi, perenimi, str(koik))
             print("Вы не сдали тест!")
-    return k
+    return koik, k
 
 def nimi(fail:str)->bool:
     """
@@ -104,16 +101,35 @@ def nimi(fail:str)->bool:
                 nimi=kirje['nimi']
                 perenimi=kirje['perenimi']
                 email=kirje['email']
-            if valik_kusimus("kusimused_vastused.txt", nimi, perenimi, email): 
+            koik, tulemus=valik_kusimus("kusimused_vastused.txt")
+            h={'nimi': nimi, 'perenimi': perenimi, 'punktid': koik, 'email': email}
+            with open("tulemus.txt", 'a', encoding="utf-8-sig") as f:
+                f.write(str(h)+"\n")
+            if tulemus:
                 fail1="oiged.txt"
                 with open(fail1, 'a', encoding="utf-8-sig") as f:
                     f.write(str(kirje)+"\n")
+                saada_kiri_oige(email, nimi, perenimi, str(koik))
             else:
                 fail2="valed.txt"
                 with open(fail2, 'a', encoding="utf-8-sig") as f:
                     f.write(str(kirje)+"\n")
+                saada_kiri_valed(email, nimi, perenimi, str(koik))
             m=True
     return m
+
+def sal(fail:str):
+    """
+    """
+    with open (fail, 'r', encoding="utf-8-sig") as f:
+        sonad=[]
+        for rida in f:
+            sonad.append(eval(rida.strip()))
+    for kirje in sonad:
+        if kirje['punktid'] < 3:
+            uus=(f"{kirje} - EI SOBINUD")
+        else:
+            uus=(f"{kirje} - SOBIS")
 
 
 def lisamine_kusimus(fail:str):
@@ -190,35 +206,26 @@ def saada_kiri_valed(email:str, nimi:str, perenimi:str, koik:str):
     except Exception as e:
         print("Viga: ",e)
 
-def saada_koondraport(tulemused, parim_vastaja, email_tooandjale="tootaja@firma.ee"):
-    """
-    Saadab tööandjale koondrapordi küsitlustulemuste kohta.
-    """
-    raport = "Tere!\n\nTänased küsimustiku tulemused:\n\n"
-    
-    for tulemus in tulemused:
-        nimi = tulemus['nimi']
-        oiged = tulemus['oiged']
-        email = tulemus['email']
-        sobivus = "SOBIS" if oiged >= 3 else "EI SOBINUD"  
-        raport += f"{nimi} – {oiged} õigesti – {email} – {sobivus}\n"
-    
-    raport += f"\nParim vastaja: {parim_vastaja['nimi']} ({parim_vastaja['oiged']} õigesti)\n"
-    
-    raport += "\nLugupidamisega,\nKüsimustiku Automaatprogramm"
 
-    send_email_to_workplace(email_tooandjale, "Tänased küsitlustulemused", raport)
-
-def send_email_to_workplace(kellele, teema, sisu):
+def send_email_to_workplace():
     """
     Funktsioon e-maili saatmiseks tööandjale.
     """
+    uus=sal("tulemused.txt")
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
     kellelt = "oleksandraryshniak@gmail.com"  
     salasõna = input("Sisesta oma e-maili salasõna: ")
-
     msg = EmailMessage()
+    teema="Tere!"
+    kellele="oleksandraryshniak@gmail.com"
+    sisu="Tänased küsimustiku tulemused:"
+    sisu1=
+
+Parim vastaja: Kati Kask (5 õigesti)
+
+Lugupidamisega,  
+Küsimustiku Automaatprogramm
     msg['Subject'] = teema
     msg['From'] = kellelt
     msg['To'] = kellele

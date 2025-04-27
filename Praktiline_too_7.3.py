@@ -30,6 +30,7 @@ while True:
             email=str(input("Sisesta oma email: ")).strip()
             asjaosaline("koik.txt",nimi, perenimi, email)
         kogus_asjaosaline("koik.txt")
+        saada_koondraport(tulemused, parim_vastaja)
         break
     elif valik==2:
         lisamine_kusimus("kusimused_vastused.txt")

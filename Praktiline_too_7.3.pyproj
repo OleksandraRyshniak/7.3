@@ -28,6 +28,7 @@
     <Content Include="koik.txt" />
     <Content Include="kusimused_vastused.txt" />
     <Content Include="oiged.txt" />
+    <Content Include="tulemus.txt" />
     <Content Include="valed.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
