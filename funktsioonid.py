@@ -3,6 +3,7 @@ import smtplib
 from email.message import EmailMessage
 import ssl
 from tkinter import filedialog
+import ast
 
 def asjaosaline(fail:str, nimi:str, perenimi:str, email:str):
     """
@@ -15,18 +16,13 @@ def asjaosaline(fail:str, nimi:str, perenimi:str, email:str):
 def kogus_asjaosaline(fail:str):
     """
     """
-    M=3
+    M=1
  
     with open(fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
-            rida = rida.strip()
-            if not rida:
-                 continue  
-            try:
-                sonad.append(eval(rida))
-            except Exception as e:
-                print(f"Ошибка в строке: {rida} – {e}")
+            sonad.append(ast.literal_eval(rida.strip()))
+
     if M>len(sonad):
         print("Недостаточное колтчество участников!")
         return
@@ -42,12 +38,12 @@ def valik_kusimus(fail:str)-> any:
     with open(fail, 'r', encoding="utf-8-sig") as f:
         p=[]
         for rida in f:
-            p.append(eval(rida.strip()))
+            p.append(ast.literal_eval(rida.strip()))
     k=False
     with open(fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
-            sonad.append(eval(rida.strip()))
+            sonad.append(ast.literal_eval(rida.strip()))
     if N>len(sonad):
         print("Недостаточно вопросов!")
         return
@@ -78,15 +74,15 @@ def nimi(fail:str)->bool:
     with open (fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
-            sonad.append(eval(rida.strip()))
+            sonad.append(ast.literal_eval(rida.strip()))
     with open (fail1, 'r', encoding="utf-8-sig") as f:
         oige=[]
         for rida in f:
-            oige.append(eval(rida.strip()))
+            oige.append(ast.literal_eval(rida.strip()))
     with open (fail1, 'r', encoding="utf-8-sig") as f:
         valed=[]
         for rida in f:
-            valed.append(eval(rida.strip()))
+            valed.append(ast.literal_eval(rida.strip()))
     p=oige+valed
     for i in range (M):
         random.shuffle(sonad)
@@ -106,12 +102,10 @@ def nimi(fail:str)->bool:
             with open("tulemus.txt", 'a', encoding="utf-8-sig") as f:
                 f.write(str(h)+"\n")
             if tulemus:
-                fail1="oiged.txt"
                 with open(fail1, 'a', encoding="utf-8-sig") as f:
                     f.write(str(kirje)+"\n")
                 saada_kiri_oige(email, nimi, perenimi, str(koik))
             else:
-                fail2="valed.txt"
                 with open(fail2, 'a', encoding="utf-8-sig") as f:
                     f.write(str(kirje)+"\n")
                 saada_kiri_valed(email, nimi, perenimi, str(koik))
@@ -124,13 +118,13 @@ def sal(fail:str):
     with open (fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
-            sonad.append(eval(rida.strip()))
+            sonad.append(ast.literal_eval(rida.strip()))
     for kirje in sonad:
         if kirje['punktid'] < 3:
             uus=(f"{kirje} - EI SOBINUD")
         else:
             uus=(f"{kirje} - SOBIS")
-
+    return uus
 
 def lisamine_kusimus(fail:str):
     """
@@ -138,7 +132,7 @@ def lisamine_kusimus(fail:str):
     with open (fail, 'r', encoding="utf-8-sig") as f:
         s=[]
         for rida in f:
-            s.append(eval(rida.strip()))
+            s.append(ast.literal_eval(rida.strip()))
     print("Kõik küsimused:")
     for kirje in s:
         print(f"{kirje['kusimus']} : {kirje['vastus']}")
@@ -147,7 +141,7 @@ def lisamine_kusimus(fail:str):
     with open (fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
-            sonad.append(eval(rida.strip()))
+            sonad.append(ast.literal_eval(rida.strip()))
     for kirje in sonad:
         if kirje['kusimus']==kusimus:
             print("See küsimus on juba olemas! Sisestage veel üks.")
@@ -211,7 +205,7 @@ def send_email_to_workplace():
     """
     Funktsioon e-maili saatmiseks tööandjale.
     """
-    uus=sal("tulemused.txt")
+    uus=sal("tulemus.txt")
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
     kellelt = "oleksandraryshniak@gmail.com"  
@@ -220,17 +214,14 @@ def send_email_to_workplace():
     teema="Tere!"
     kellele="oleksandraryshniak@gmail.com"
     sisu="Tänased küsimustiku tulemused:"
-    sisu1=
-
-Parim vastaja: Kati Kask (5 õigesti)
-
-Lugupidamisega,  
-Küsimustiku Automaatprogramm
+    sisu1= uus
+    sisu2="Lugupidamisega,"  
+    sisu3="Küsimustiku Automaatprogramm"
     msg['Subject'] = teema
     msg['From'] = kellelt
     msg['To'] = kellele
     msg.set_content(sisu)
-
+    msg.set_content(f"{sisu}\n{sisu1}\n{sisu2}\n{sisu3}")
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls(context=ssl.create_default_context())
