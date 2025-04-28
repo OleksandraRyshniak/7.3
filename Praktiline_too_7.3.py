@@ -1,16 +1,16 @@
 from funktsioonid import *
 
-print("Здраствуйте, здесь вы можете пройти опрос !")
+print("Tere, siin saate osaleda küsitlusel!")
 print("-----MENU-----")
-print("1. Пройти опрос;\n",
-      "2. Добавить вопрос;\n",
+print("1. Osaleda küsitluses;\n",
+      "2. Lisada küsimus;\n",
       "3. Välja.")
 while True:
     try:
-        valik=int(input("Ваш выбор: "))
+        valik=int(input("Sinu valik: "))
         break
     except:
-        print("Ответ должен быть числовым!")
+        print("Vastus peab olema numbriline!")
 while True:
     if valik==1:
         for i in range (3):
@@ -38,4 +38,4 @@ while True:
     elif valik==3:
         break
     else:
-        print("Ответ должен быть только от 1 до 3!")
+        print("Vastus peab olema ainult vahemikus 1 kuni 3!")

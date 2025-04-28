@@ -1,6 +1,15 @@
-{"kusimus": "Какое животное является самым быстрым на Земле?", "vastus" : "Гепард"}
-{"kusimus": "Какая птица не умеет летать, но отлично бегает?", "vastus" : "Страус"}
-{"kusimus": "Как называется самый крупный млекопитающий животное?", "vastus" : "Синий кит"}
-{"kusimus": "Как называется столица Франции?", "vastus" : "Париж"}
-{"kusimus": "Какой город является столицей Японии?", "vastus" : "Токио"}
-{'kusimus': 'Сколько будет 2+2?', 'vastus': '4'}
+{"kusimus": "Milline loom on maa kiireim?", "vastus" : "Gepard"}
+{"kusimus": "Milline lind ei oska lennata, kuid jookseb väga hästi?", "vastus" : "Straus"}
+{"kusimus": "Kuidas nimetatakse kõige suuremat imetajat?", "vastus" : "Sinivaal"}
+{"kusimus": "Kuidas nimetatakse Prantsusmaa pealinna?", "vastus" : " Pariis"}
+{"kusimus": "Milline linn on Jaapani pealinn?", "vastus" : "Tokyo"}
+{'kusimus': 'Kui palju on 2 + 2?', 'vastus': '4'}
+{'kusimus': 'Mis värv tekib, kui segada sinist ja kollast?', 'vastus': 'Roheline'}
+{'kusimus': 'Mitu päeva on nädalas?', 'vastus': 'Seitse'}
+{'kusimus': 'Milline on Päikesesüsteemi suurim planeet?', 'vastus': 'Jupiter'}
+{'kusimus': 'Kui palju on 8 pluss 5?', 'vastus': '13'}
+{'kusimus': 'Mitu käppa on kassil?', 'vastus': '4'}
+{'kusimus': 'Milline aastaaeg tuleb pärast suve?', 'vastus': 'Sügis'}
+{'kusimus': 'Kuidas nimetatakse maailma kõige kõrgemat mäge?', 'vastus': 'Everest'}
+{'kusimus': 'Mitu kuud on aastas?', 'vastus': '12'}
+{'kusimus': 'Mis näitab aega?', 'vastus': ' Kell'}

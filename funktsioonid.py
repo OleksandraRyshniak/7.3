@@ -6,7 +6,12 @@ from tkinter import filedialog
 import ast
 
 def asjaosaline(fail:str, nimi:str, perenimi:str, email:str):
-    """
+    """Osaleja lisamine
+    See funktsioon lisab osaleja, kelle sisestab kasutaja.
+    :fail:str 
+    :nimi: str -> Sisend kasutajalt
+    :perenimi: str -> Sisend kasutajalt
+    :email: str -> Sisend kasutajalt
     """
     uus_asjaosaline={"nimi": nimi, "perenimi": perenimi, "email":email}
     with open (fail, 'a', encoding="utf-8-sig") as f:
@@ -14,23 +19,26 @@ def asjaosaline(fail:str, nimi:str, perenimi:str, email:str):
     print("Asjaosaline on lisatud!")
 
 def kogus_asjaosaline(fail:str):
+    """Osalejate arv
+    Funktsioon määrab osalejate arvu.
+    :fail:str
     """
-    """
-    M=1
- 
+    M=3
     with open(fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
             sonad.append(ast.literal_eval(rida.strip()))
-
     if M>len(sonad):
-        print("Недостаточное колтчество участников!")
+        print("Osalejate arv on ebapiisav!")
         return
     else:
         nimi("koik.txt") 
 
 def valik_kusimus(fail:str)-> any:
-    """
+    """Küsimuste valik
+    Funktsioon valib küsimused failist.
+    :fail:str
+    :rtype -> any 
     """
     N=5
     koik=0
@@ -39,13 +47,12 @@ def valik_kusimus(fail:str)-> any:
         p=[]
         for rida in f:
             p.append(ast.literal_eval(rida.strip()))
-    k=False
     with open(fail, 'r', encoding="utf-8-sig") as f:
         sonad=[]
         for rida in f:
             sonad.append(ast.literal_eval(rida.strip()))
     if N>len(sonad):
-        print("Недостаточно вопросов!")
+        print("Küsimusi on liiga vähe!")
         return
     else:
         random.shuffle(sonad)
@@ -59,14 +66,17 @@ def valik_kusimus(fail:str)-> any:
             else:
                 print(f"Õige vastus on: {kirje['vastus']}")
         if koik/N>=0.5:
-            print("Поздравляем! Вы сдали тест.")
             k=True
         else:
-            print("Вы не сдали тест!")
+            k=False
     return koik, k
 
 def nimi(fail:str)->bool:
-    """
+    """Lisamine määratud faili
+    Funktsioon määrab, kas osaleja on sooritanud, lisades ta sooritajate faili,
+    kui ei, siis mitte-sooritajate faili.
+    :fail:str
+    :rtype -> bool
     """
     M=3
     fail1="oiged.txt"
@@ -88,12 +98,12 @@ def nimi(fail:str)->bool:
         random.shuffle(sonad)
         valitud=sonad[:1]
         if valitud in p:
-            print("Этот учасник уже проходил опрос!")
+            print(" See osaleja on juba küsitlust läbinud!")
             return 
             m = False
         else:
             for kirje in valitud:
-                print(f"Тест проходит {kirje['nimi']} {kirje['perenimi']}")
+                print(f"Testi teeb {kirje['nimi']} {kirje['perenimi']}")
                 nimi=kirje['nimi']
                 perenimi=kirje['perenimi']
                 email=kirje['email']
@@ -112,22 +122,11 @@ def nimi(fail:str)->bool:
             m=True
     return m
 
-def sal(fail:str):
-    """
-    """
-    with open (fail, 'r', encoding="utf-8-sig") as f:
-        sonad=[]
-        for rida in f:
-            sonad.append(ast.literal_eval(rida.strip()))
-    for kirje in sonad:
-        if kirje['punktid'] < 3:
-            uus=(f"{kirje} - EI SOBINUD")
-        else:
-            uus=(f"{kirje} - SOBIS")
-    return uus
 
 def lisamine_kusimus(fail:str):
-    """
+    """Küsimuse lisamine
+    Funktsioon lisab küsimuse ja tema vastuse, mille sisestab kasutaja.
+    :fail:str
     """
     with open (fail, 'r', encoding="utf-8-sig") as f:
         s=[]
@@ -154,6 +153,14 @@ def lisamine_kusimus(fail:str):
 
 
 def saada_kiri_oige(email:str, nimi:str, perenimi:str, koik:str):
+    """Kirja saatmine
+    Funktsioon saadab kirja, kui osaleja on sooritanud.
+    :nimi: str -> Sisend kasutajalt
+    :perenimi: str -> Sisend kasutajalt
+    :email: str -> Sisend kasutajalt
+    :koik : str
+    """
+
     kellele=email
     teema="Tere" + " " + nimi + " " + perenimi
     sisu="Sinu õigete vastuste arv: " + koik +"."
@@ -178,6 +185,13 @@ def saada_kiri_oige(email:str, nimi:str, perenimi:str, koik:str):
 
 
 def saada_kiri_valed(email:str, nimi:str, perenimi:str, koik:str):
+    """Kirja saatmine
+    Funktsioon saadab kirja, kui osaleja ei ole sooritanud.
+    :nimi: str -> Sisend kasutajalt
+    :perenimi: str -> Sisend kasutajalt
+    :email: str -> Sisend kasutajalt
+    :koik : str
+    """
     kellele=email
     teema="Tere" + " " + nimi + " " + perenimi
     sisu="Sinu õigete vastuste arv: " + koik +"."
@@ -200,28 +214,35 @@ def saada_kiri_valed(email:str, nimi:str, perenimi:str, koik:str):
     except Exception as e:
         print("Viga: ",e)
 
-
 def send_email_to_workplace():
+    """Kirja saatmine
+    Funktsioon e-maili saatmiseks tööandjale koos kõigi tulemustega.
     """
-    Funktsioon e-maili saatmiseks tööandjale.
-    """
-    uus=sal("tulemus.txt")
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
     kellelt = "oleksandraryshniak@gmail.com"  
+    kellele = "oleksandraryshniak@gmail.com" 
     salasõna = input("Sisesta oma e-maili salasõna: ")
+    try:
+        with open("tulemus.txt", 'r', encoding="utf-8-sig") as f:
+            sonad = [ast.literal_eval(rida.strip()) for rida in f if rida.strip()]
+    except FileNotFoundError:
+        print("Tulemusfaili ei leitud!")
+        return
+    sisu = "Tänased küsimustiku tulemused:\n\n"
+    for kirje in sonad:
+        nimi = kirje['nimi']
+        perenimi = kirje['perenimi']
+        punktid = kirje['punktid']
+        staatus = "SOBIS" if punktid >= 3 else "EI SOBINUD"
+        sisu += f"{nimi} {perenimi} - {punktid} punkti - {staatus}\n"
+
+    sisu += "\nLugupidamisega,\nKüsimustiku Automaatprogramm"
     msg = EmailMessage()
-    teema="Tere!"
-    kellele="oleksandraryshniak@gmail.com"
-    sisu="Tänased küsimustiku tulemused:"
-    sisu1= uus
-    sisu2="Lugupidamisega,"  
-    sisu3="Küsimustiku Automaatprogramm"
-    msg['Subject'] = teema
+    msg['Subject'] = "Tänased küsimustiku tulemused"
     msg['From'] = kellelt
     msg['To'] = kellele
     msg.set_content(sisu)
-    msg.set_content(f"{sisu}\n{sisu1}\n{sisu2}\n{sisu3}")
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls(context=ssl.create_default_context())
